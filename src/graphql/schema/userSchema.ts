@@ -47,8 +47,6 @@ export const userSchema = gql`
     }
 
     type Subscription {
-        userCreated: User
-        userUpdated: User
-        userDeleted: User
+        onUserChange: Notification
     }
 `;
