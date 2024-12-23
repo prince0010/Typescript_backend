@@ -1,10 +1,10 @@
 import dotenv from 'dotenv'
 import { PubSub } from "graphql-subscriptions"
-import { IUserInput, IUser } from '../../interfaces/user'
-import { IAuthRequest } from '../../interfaces/auth'
-import { IDataSource } from '../../interfaces/context'
-import { checkAuth } from '../../constants/action'
-import { ITableQueryParams } from '../../interfaces/params'
+import { IUserInput, IUser } from '../../interfaces/user.js'
+import { IAuthRequest } from '../../interfaces/auth.js'
+import { IDataSource } from '../../interfaces/context.js'
+import { checkAuth } from '../../constants/action.js'
+import { ITableQueryParams } from '../../interfaces/params.js'
 import { ObjectId } from 'mongoose'
 import { subscribe } from 'diagnostics_channel'
 

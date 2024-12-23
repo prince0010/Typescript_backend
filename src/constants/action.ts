@@ -1,5 +1,5 @@
 import { PubSub } from "graphql-subscriptions"
-import { IAuthRequest } from "../interfaces/auth"
+import { IAuthRequest } from "../interfaces/auth.js"
 import { GraphQLError } from "graphql"
 
 const pubsub = new PubSub()

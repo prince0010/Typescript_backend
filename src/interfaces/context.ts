@@ -1,4 +1,4 @@
-import { userApi } from "../graphql/api/userApi"
+import { userApi } from "../graphql/api/userApi.js"
 
 
 export interface IDataSource extends Request {

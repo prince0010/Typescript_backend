@@ -4,39 +4,37 @@ import http from "http"
 import { WebSocketServer } from "ws"
 import { useServer } from 'graphql-ws/lib/use/ws'
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer'
-import { resolvers } from "../graphql/resolvers/index"
-import { typeDefs } from '../graphql/schema/index'
-// export const createApolloServer = async (httpServer: any, app: any) => {
-export const createApolloServer = async (app: any) => {
-    const schema = makeExecutableSchema({resolvers , typeDefs })
+import { resolvers } from "../graphql/resolvers/index.js"
+import { typeDefs } from '../graphql/schema/index.js'
 
-    // Http and WebSocket Servers
-    const httpServer = http.createServer(app);
-
-    const wsServer = new WebSocketServer({
-        server: httpServer,
-        path: '/graphql'
-    })
-
-    const serverCleanup = useServer({ schema }, wsServer)
-
-    const server = new ApolloServer({
-        schema,
-        plugins: [
+export const createApolloServer = async (httpServer: any, path: string) => {
+        const schema = makeExecutableSchema({ resolvers, typeDefs })
+      
+        // WebSocket Server for Subscriptions
+        const wsServer = new WebSocketServer({
+          server: httpServer,
+          path,
+        })
+        const serverCleanup = useServer({ schema }, wsServer)
+      
+        // Apollo Server Initialization
+        const server = new ApolloServer({
+          schema,
+          plugins: [
             ApolloServerPluginDrainHttpServer({ httpServer }),
             {
-                async serverWillStart() {
-                    return {
-                        async drainServer() {
-                            await serverCleanup.dispose()
-                        },
-                    }
-                },
+              async serverWillStart() {
+                return {
+                  async drainServer() {
+                    await serverCleanup.dispose()
+                  },
+                }
+              },
             },
-        ],
-    })
-
-    await server.start()
-    
-    return httpServer
-}
+          ],
+        })
+      
+        await server.start()
+        return server
+      }
+      

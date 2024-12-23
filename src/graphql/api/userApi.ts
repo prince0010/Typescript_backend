@@ -1,9 +1,9 @@
 import { RESTDataSource } from "@apollo/datasource-rest"
 import { ObjectId } from "mongoose"
-import { IUser, IUserInput } from "../../interfaces/user"
-import User from "../../models/user"
+import { IUser, IUserInput } from "../../interfaces/user.js"
+import User from "../../models/user.js"
 import { GraphQLError } from "graphql"
-import { ITableQueryParams } from "../../interfaces/params"
+import { ITableQueryParams } from "../../interfaces/params.js"
 import bcyrpt from "bcryptjs"
 
 export class userApi extends RESTDataSource {

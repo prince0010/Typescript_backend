@@ -1,11 +1,12 @@
 import { ObjectId } from "mongoose"
-import { IUser } from "./user"
+import { IUser } from "./user.js"
 import { Token } from "graphql"
+import { Request } from "express"
 
 export interface IAuthRequest extends Request {
     authId?: ObjectId
     authRole?: string
-    isAuth: boolean
+    isAuth?: boolean
 }
 
 export interface IAuth{

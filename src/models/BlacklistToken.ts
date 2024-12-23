@@ -1,11 +1,12 @@
 import { Schema, model } from "mongoose";
-import { IToken } from "../interfaces/auth"
+import { IToken } from "../interfaces/auth.js"
 
 const BlacklistTokenSchema = new Schema<IToken>(
     {
         token: {
             type: Schema.Types.String,
             unique: true,
+            required: true,
         },
     },
     {
