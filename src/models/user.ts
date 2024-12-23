@@ -35,6 +35,18 @@ const UserModel = new Schema<IUser>({
         required: [true, 'Password is required'],
         minlength: [10, "Password must be atleast 10 characters long"],
     },
+    dateBirth: {
+        type: Date,
+        required: [true, 'Date of birth is required'],
+    },
+    isActive: {
+        type: Boolean,
+        default: true,
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false,
+    },
     },
     {
         timestamps: true,

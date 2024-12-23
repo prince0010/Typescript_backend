@@ -1,7 +1,6 @@
 const gql = String.raw
 
 export const authSchema = gql`
-
     scalar DateTime
 
     type Log {

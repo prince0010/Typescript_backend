@@ -1,8 +1,8 @@
-import { UserAPI } from "../graphql/api/authApi"
+import { userApi } from "../graphql/api/userApi"
 
 
 export interface IDataSource extends Request {
     dataSources: {
-        User: UserAPI
+        User: userApi
     }
 }
