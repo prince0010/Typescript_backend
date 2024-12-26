@@ -3,7 +3,7 @@ import fs from "fs"
 import dotenv from "dotenv"
 import jose from "node-jose"
 import { IAuthInput, IPasswordInput} from "../../interfaces/auth.js"
-import user from "../../models/user.js"
+import User from "../../models/user.js"
 import bcrypt from "bcryptjs"
 import { GraphQLError, Token } from "graphql"
 import { IUser } from "../../interfaces/user.js"
@@ -20,8 +20,8 @@ export class authApi extends RESTDataSource {
 
     console.log("Attempting Login For:", employeeNumber)
 
-        const User = await user.findOne({ employeeNumber })
-            if (!User){
+        const user = await User.findOne({ employeeNumber })
+            if (!user){
                 console.error("Employee Not Found:", employeeNumber)
                 throw new GraphQLError("Employee Does not exist.", {
                     extensions: {
@@ -30,8 +30,8 @@ export class authApi extends RESTDataSource {
                     },
                 })
             }
-            console.log("User Found:", User);
-     const passwordMatch = await bcrypt.compare(password, User.password)
+            console.log("User Found:", user);
+     const passwordMatch = await bcrypt.compare(password, user.password)
      if(!passwordMatch){
         console.error("Password mismatch for:", employeeNumber)
         throw new GraphQLError("Wrong Password, it didn't Match", {
@@ -70,7 +70,7 @@ export class authApi extends RESTDataSource {
                 key
             ).update(
                 JSON.stringify({
-                  sub: User?._id.toString(),
+                  sub: user?._id.toString(),
                   exp: Math.floor(Date.now() / 1000) + 12 * 60 * 60,
                 })
             )
@@ -119,8 +119,8 @@ export class authApi extends RESTDataSource {
                 const result = await jose.JWS.createVerify(key).verify(token.toString())
                 const decode = JSON.parse(result.payload.toString())
 
-                const User = await user.findById(decode.sub)
-                if(!User)
+                const user = await User.findById(decode.sub)
+                if(!user)
                     throw new GraphQLError("User does not exists", {
                         extensions: {
                             http: {
@@ -128,7 +128,7 @@ export class authApi extends RESTDataSource {
                             },
                         },
                     })
-                return User
+                return user
         } catch (error){
             throw error
         }
@@ -138,8 +138,8 @@ export class authApi extends RESTDataSource {
     password
   }: IPasswordInput): Promise<boolean> => {
         try{
-            const User = await user.findById(_id)
-            if (!User)
+            const user = await User.findById(_id)
+            if (!user)
                 throw new GraphQLError("User Does not Exist", {
                     extensions: {
                         http:{
@@ -147,7 +147,7 @@ export class authApi extends RESTDataSource {
                         },
                     },
                 })
-                return await bcrypt.compare(password, User.password)
+                return await bcrypt.compare(password, user.password)
         }catch(error){
             throw error
         }
@@ -157,7 +157,7 @@ export class authApi extends RESTDataSource {
     password,
   }: IPasswordInput): Promise<IUser> => {
         try {
-                const User = await user.findByIdAndUpdate(
+                const user = await User.findByIdAndUpdate(
                     _id,
                     {
                         password: await bcrypt.hash(password, 12)
@@ -166,7 +166,7 @@ export class authApi extends RESTDataSource {
                         new: true,
                     }
                 )
-                if(!User)
+                if(!user)
                     throw new GraphQLError("User Does Not Exist", {
                 extensions:{
                     http:{
@@ -174,7 +174,7 @@ export class authApi extends RESTDataSource {
                     },
                 },
             })
-         return User
+         return user
         }catch(error: any){
             if(error.name === "ValidationError"){
             const validationErrors = Object.values(error.errors).map(
