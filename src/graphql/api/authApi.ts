@@ -2,22 +2,27 @@ import { RESTDataSource } from "@apollo/datasource-rest"
 import fs from "fs"
 import dotenv from "dotenv"
 import jose from "node-jose"
-import { IAuthInput, IPasswordInput} from "../../interfaces/auth"
-import user from "../../models/user"
+import { IAuthInput, IPasswordInput} from "../../interfaces/auth.js"
+import user from "../../models/user.js"
 import bcrypt from "bcryptjs"
 import { GraphQLError, Token } from "graphql"
-import { IUser } from "../../interfaces/user"
-import BlacklistToken from "../../models/BlacklistToken"
-import { errors } from "jose"
+import { IUser } from "../../interfaces/user.js"
+import BlacklistToken from "../../models/BlacklistToken.js"
+
 dotenv.config()
 
 export class authApi extends RESTDataSource {
-  login = async({
+
+  login = async ({
     employeeNumber,
     password,
   }: IAuthInput): Promise<jose.JWS.CreateSignResult> => {
+
+    console.log("Attempting Login For:", employeeNumber)
+
         const User = await user.findOne({ employeeNumber })
-            if(!User){
+            if (!User){
+                console.error("Employee Not Found:", employeeNumber)
                 throw new GraphQLError("Employee Does not exist.", {
                     extensions: {
                         field: "employeeNumber",
@@ -25,8 +30,10 @@ export class authApi extends RESTDataSource {
                     },
                 })
             }
+            console.log("User Found:", User);
      const passwordMatch = await bcrypt.compare( password, User.password )
      if(!passwordMatch){
+        console.error("Password mismatch for:", employeeNumber)
         throw new GraphQLError("Wrong Password, it didn't Match", {
             extensions: {
                 field: "password",
@@ -34,9 +41,10 @@ export class authApi extends RESTDataSource {
             },
         })
      }
+     console.log("Password Match:", passwordMatch)
      try {
         const path = process.env.PRIVATE_KEY_PATH
-        if(!path)
+        if (!path)
             throw new GraphQLError("Invalid Authentication", {
                 extensions: {
                     http: { status: 401 },
@@ -44,8 +52,10 @@ export class authApi extends RESTDataSource {
             })
             const keyId = process.env.KEY_ID
             const PRIVATE_KEY = fs.readFileSync(path, 'utf-8')
+            console.log("Private Key Loaded")
             const store = jose.JWK.createKeyStore()
             const key = await store.add(PRIVATE_KEY, "pem")
+            console.log("Key Created")
 
             // Return Token
             const token = await jose.JWS.createSign(
@@ -58,15 +68,14 @@ export class authApi extends RESTDataSource {
                     },
                 },
                 key
-            )
-            .update(
+            ).update(
                 JSON.stringify({
                   sub: User?._id.toString(),
                   exp: Math.floor(Date.now() / 1000) + 12 * 60 * 60,
                 })
             )
             .final()
-
+           
             if(!token)
                 throw new GraphQLError("Invalid Authentication",{
                     extensions: {
@@ -75,8 +84,10 @@ export class authApi extends RESTDataSource {
                         },
                     },
                 })
-                return token
+            console.log("Token Created:", token)
+            return token
      }catch(error){
+        console.error("Error Creating Token:", error)
         throw error
      }
     }
@@ -92,7 +103,6 @@ export class authApi extends RESTDataSource {
                         }
                     },
                 })
-
                 const path = process.env.PUBLIC_KEY_PATH
                 if(!path)
                     throw new GraphQLError("Invalid Authentication", {
@@ -185,5 +195,5 @@ export class authApi extends RESTDataSource {
         throw error
     }
   } 
-  
+
 }

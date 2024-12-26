@@ -1,24 +1,23 @@
 import dotenv from "dotenv"
 import jose from "node-jose"
-import { IAuthInput, IAuthRequest, IPasswordInput, IToken } from "../../interfaces/auth"
-import { IDataSource } from "../../interfaces/context"
-import user from "../../models/user"
+import { IAuthInput, IAuthRequest, IPasswordInput, IToken } from "../../interfaces/auth.js"
+import { IDataSource } from "../../interfaces/context.js"
+import user from "../../models/user.js"
 import { GraphQLError } from "graphql"
-import { IUser } from "../../interfaces/user"
-import { checkAuth } from "../../constants/action"
-
+import { IUser } from "../../interfaces/user.js"
+import { checkAuth } from "../../constants/action.js"
 
 dotenv.config()
 
 export const authResolver = {
     Query: {
         login: async (
-            _:any,
+            _: any,
             input: IAuthInput,
             context: IAuthInput & IDataSource
          ): Promise<jose.JWS.CreateSignResult> => {
             const User = await user.findOne({ employeeNumber: input.employeeNumber })
-            if(!User){
+            if (!User){
                 throw new GraphQLError("Employee Number Does Not Exist.", {
                     extensions: {
                         field: "employeeNumber",
@@ -81,6 +80,6 @@ export const authResolver = {
             }catch(error){
                 throw error
             }
-        }
+        },
     },
 }

@@ -5,7 +5,7 @@ import { Request } from "express"
 
 export interface IAuthRequest extends Request {
     authId?: ObjectId
-    authRole?: string
+    // authRole?: string
     isAuth?: boolean
 }
 

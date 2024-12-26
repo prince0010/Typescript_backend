@@ -20,7 +20,6 @@ export class userApi extends RESTDataSource {
             throw error
         }
     } 
-
     fetchUsers = async ({
         isActive = true,
         isDeleted = false,

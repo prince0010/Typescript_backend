@@ -44,7 +44,7 @@ export const userResolvers = {
                 { input }: { input: IUserInput },
                 context: IAuthRequest & IDataSource
             ): Promise<IUser> => {
-                checkAuth(context)
+                // checkAuth(context)
                 try{
                     const user = await context.dataSources.User.createUser(input)
 

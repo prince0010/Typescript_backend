@@ -21,10 +21,10 @@ const UserModel = new Schema<IUser>({
     },
     email: {
         type: String,
-        // required: [true, 'Email is required'],
+        required: [true, 'Email is required'],
         validate: {
             validator: (value: string) => {
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+S/
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
                 return emailRegex.test(value)
             },
             message: "Please provide a valid email address.",
@@ -53,4 +53,4 @@ const UserModel = new Schema<IUser>({
     }
 );
 
-export default model<IUser>("User", UserModel);
+export default model<IUser>("user", UserModel);
