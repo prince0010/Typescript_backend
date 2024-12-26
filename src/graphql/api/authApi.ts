@@ -31,7 +31,7 @@ export class authApi extends RESTDataSource {
                 })
             }
             console.log("User Found:", User);
-     const passwordMatch = await bcrypt.compare( password, User.password )
+     const passwordMatch = await bcrypt.compare(password, User.password)
      if(!passwordMatch){
         console.error("Password mismatch for:", employeeNumber)
         throw new GraphQLError("Wrong Password, it didn't Match", {
@@ -61,7 +61,7 @@ export class authApi extends RESTDataSource {
             const token = await jose.JWS.createSign(
                 {
                     format: "compact",
-                    fields:{
+                    fields: {
                         alg: "RS256",
                         typ: "JWT",
                         kid: keyId,
