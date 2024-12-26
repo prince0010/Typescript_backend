@@ -14,7 +14,7 @@ export interface IAuth{
 }
 
 export interface IAuthInput extends IAuth{
-    username: string
+    employeeNumber: string
 }
 
 export interface IPasswordInput {

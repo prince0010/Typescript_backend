@@ -3,7 +3,7 @@ import { Document, ObjectId } from "mongoose"
 
 // Data Type sa mga entities
 export interface IUser extends Document{
-    id: string
+    _id: string
     firstName: string
     middleName: string
     lastName: string
@@ -26,6 +26,6 @@ export interface IUserInput extends Request{
     dateBirth: Date
 }
 
-export interface IUserRequest extends Request {
-    user?: IUser;
-}
+// export interface IUserRequest extends Request {
+//     user?: IUser;
+// }
