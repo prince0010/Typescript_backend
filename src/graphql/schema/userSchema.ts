@@ -12,7 +12,7 @@ export const userSchema = gql`
         isActive: Boolean!
         isDeleted: Boolean!
         email: String!
-        password: String!
+        # password: String!
         dateBirth: Date!
     }
 
@@ -37,13 +37,14 @@ export const userSchema = gql`
     }
 
     input updateUserInput {
-        firstName: String
-        middleName: String
-        lastName: String
+        _id: ID!
+        firstName: String!
+        middleName: String!
+        lastName: String!
         employeeNumber: String!
-        email: String
+        email: String!
         # password: String
-        dateBirth: Date
+        dateBirth: Date!
     }
 
     type Query {
@@ -52,8 +53,8 @@ export const userSchema = gql`
     }
 
     type Mutation {
-        createUser(input: UserInput!): User
-        updateUser(_id: ID!, input: UserInput!): User
+        createUser(input: createUserInput!): User
+        updateUser(input: updateUserInput!): User
         # deleteUser(_id: ID!): Boolean
         softDeleteUser(_id: ID!): Boolean
         hardDeleteUser(_id: ID!): Boolean

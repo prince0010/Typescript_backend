@@ -1,5 +1,5 @@
 import { RESTDataSource } from "@apollo/datasource-rest"
-import { ObjectId } from "mongoose"
+import mongoose, { ObjectId } from "mongoose"
 import { IUser, IUserInput } from "../../interfaces/user.js"
 import User from "../../models/user.js"
 import { GraphQLError } from "graphql"
@@ -84,9 +84,13 @@ export class userApi extends RESTDataSource {
     // Update User
     updateUser = async (input: IUserInput): Promise<IUser> => {
         try{
-            const user = await User.findById(input._id, input, {
-                new: true,
+            console.log("Updating User with input: sheshh", input)
+            console.log("Type of _id:", typeof input._id)
+
+            const user = await User.findByIdAndUpdate(input._id, input, {
+                new: true, 
             })
+
             if (!user)
                 throw new GraphQLError("User not found.", {
                     extensions: { 
@@ -98,8 +102,7 @@ export class userApi extends RESTDataSource {
                 })
 
             return user
-        }
-        catch (error: any){
+        }catch (error: any){
             if (error.name === "ValidationError"){
                 const validationErrors = Object.values(error.errors).map(
                     (err:any) => ({
@@ -165,6 +168,7 @@ export class userApi extends RESTDataSource {
             }
 
             user.isDeleted = true
+            user.isActive = false
             await user.save()
         }catch (error){
             throw error
@@ -216,8 +220,11 @@ export class userApi extends RESTDataSource {
             }   
 
             user.isDeleted = false
+            user.isActive = true
+            await user.save()
         }catch (error){
             throw error
         }
     }
+    // add a update Password and Reset Password with a Role of Admin 2 Roles Admin and Users need to be added
 }

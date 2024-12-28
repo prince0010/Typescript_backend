@@ -2,8 +2,8 @@ import { Request } from "express";
 import { Document, ObjectId } from "mongoose"
 
 // Data Type sa mga entities
-export interface IUser extends Document{
-    _id: string
+export interface IUser extends Document {
+    _id: ObjectId
     firstName: string
     middleName: string
     lastName: string
@@ -22,10 +22,9 @@ export interface IUserInput extends Request{
     lastName: string
     employeeNumber: string
     email: string
-    // password: string
     dateBirth: Date
 }
 
-export interface IUserRequest extends Request {
-    user?: IUser;
-}
+// export interface IUserRequest extends Request {
+//     user?: IUser;
+// }

@@ -66,33 +66,72 @@ export const userResolvers = {
             },
 
             // Update User
-            updateUser: async(
-                _:any,
+            // updateUser: async(
+            //     _: any,
+            //     { input }: { input: IUserInput },
+            //     context: IAuthRequest & IDataSource
+            // ): Promise<IUser> => {
+            // checkAuth(context)
+
+            // console.log("Update user Input:", input)
+
+            // try{
+
+            //     // gi merge ang _id sa input object
+            //     const user = await context.dataSources.User.updateUser(input)
+
+            //     const actionUser = await context.dataSources.User.fetchUser(
+            //         context.authId as ObjectId
+            //     )
+
+            //     // await createLogAndPublish(
+            //         //     actionUser,
+            //         //     `Created user: ${user.lastName}, ${user.firstName}`,
+            //         //     context,
+            //         //     'USER_SUB',
+            //         //     'userSub',
+            //         //     'success'
+            //         // )
+
+            //     return user
+            // } catch (error) {
+            //     throw error
+            // }
+            // },
+            updateUser: async (
+                _: any,
                 { input }: { input: IUserInput },
                 context: IAuthRequest & IDataSource
             ): Promise<IUser> => {
-            checkAuth(context)
-            try{
-                const user = await context.dataSources.User.updateUser(input)
-                const actionUser = await context.dataSources.User.fetchUser(
-                    context.authId as ObjectId
-                )
-
-                // await createLogAndPublish(
+                checkAuth(context); // Ensure authentication
+            
+                console.log("Update user Input:", input);
+            
+                try {
+                    // Pass the entire input object, including _id, to the data source
+                    const user = await context.dataSources.User.updateUser(input);
+            
+                    // Optionally fetch the action user for logging purposes
+                    const actionUser = await context.dataSources.User.fetchUser(
+                        context.authId as ObjectId
+                    );
+            
+                    // Log and publish actions (commented out in your code)
+                    // await createLogAndPublish(
                     //     actionUser,
-                    //     `Created user: ${user.lastName}, ${user.firstName}`,
+                    //     `Updated user: ${user.lastName}, ${user.firstName}`,
                     //     context,
-                    //     'USER_SUB',
-                    //     'userSub',
-                    //     'success'
-                    // )
-
-                return user
-            } catch (error) {
-                throw error
-            }
+                    //     "USER_SUB",
+                    //     "userSub",
+                    //     "success"
+                    // );
+            
+                    return user;
+                } catch (error) {
+                    throw error; // Propagate error to the client
+                }
             },
-
+            
             // Delete User
             // deleteUser: async (
             //     _:any,
