@@ -22,7 +22,7 @@ export interface IUserInput extends Request{
     lastName: string
     employeeNumber: string
     email: string
-    password: string
+    // password: string
     dateBirth: Date
 }
 

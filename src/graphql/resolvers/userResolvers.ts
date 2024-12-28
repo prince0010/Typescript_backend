@@ -30,7 +30,7 @@ export const userResolvers = {
             input: ITableQueryParams,
             context: IAuthRequest & IDataSource
         ): Promise<IUser[]> => {
-            // checkAuth(context)
+            checkAuth(context)
             try{
                 return await context.dataSources.User.fetchUsers(input)
             } catch (error) {
@@ -44,7 +44,7 @@ export const userResolvers = {
                 { input }: { input: IUserInput },
                 context: IAuthRequest & IDataSource
             ): Promise<IUser> => {
-                // checkAuth(context)
+                checkAuth(context)
                 try{
                     const user = await context.dataSources.User.createUser(input)
 

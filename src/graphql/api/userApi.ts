@@ -5,7 +5,6 @@ import User from "../../models/user.js"
 import { GraphQLError } from "graphql"
 import { ITableQueryParams } from "../../interfaces/params.js"
 import bcyrpt from "bcryptjs"
-import user from "../../models/user.js"
 
 export class userApi extends RESTDataSource {
     fetchUser = async (_id: ObjectId): Promise<IUser> => {
@@ -51,34 +50,35 @@ export class userApi extends RESTDataSource {
     }
     //function to create a user
     createUser = async (input: IUserInput): Promise<IUser> => {
-        try {
+        try{
 
-            const { dateBirth, employeeNumber, password } = input
-            
-            if(!dateBirth || isNaN(new Date(dateBirth).getTime())){
-                throw new GraphQLError("Invalid Date of Birth Format")
+            const { dateBirth, employeeNumber } = input;
+
+            if (!dateBirth || isNaN(new Date(dateBirth).getTime())){
+                throw new GraphQLError("Invalid Datebirth Format,")
             }
 
             if(!employeeNumber || employeeNumber.length < 4) {
-                throw new GraphQLError("Employee Number must be at least 4 characters")
-            }
+                throw new GraphQLError("Employee Number must be at least 4 characters.")
+            } 
 
-            if(!password || password.length < 6) {
-                throw new GraphQLError("Passowrd must be atleast 6 characters long.")
-            }
+            const birthDate = new Date(dateBirth)
+            const birthMonth = (birthDate.getMonth() + 1).toString().padStart(2, '0') // last 2 digits sa birthday month niya
+            const birthYear = birthDate.getFullYear().toString().slice(-2) // last 2 digit sa birthyear niya
+            const empLastTwoChar = employeeNumber.slice(-2) // employee Number last 2 char
 
-            const hashedPassword = await bcyrpt.hash(password, 10)
+            const rawPassword = `${birthMonth}${birthYear}${empLastTwoChar}`
+            const hashedPassword = await bcyrpt.hash(rawPassword, 10)
 
-            const newUser = await user.create({
+            // himo user
+            const newUser = await User.create({
                 ...input,
                 password: hashedPassword,
             })
 
             return newUser
-        }catch(error){
-            console.error("Error creating user:", error)
+        } catch (error){
             throw error
-            
         }
     }
     // Update User
