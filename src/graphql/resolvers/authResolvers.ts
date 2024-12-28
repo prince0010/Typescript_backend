@@ -28,7 +28,7 @@ export const authResolver = {
             return await context.dataSources.Auth.login(input)
         },
         logout: async (
-            _: any,
+            _: any, 
             { token }: IToken,
             context: IAuthRequest & IDataSource,
         ): Promise<IUser> => {

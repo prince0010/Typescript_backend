@@ -35,7 +35,7 @@ export default async(
                 },
             },
            })
-        }
+        }   
 
         const pathToPublicKey = process.env.PUBLIC_KEY_PATH
 

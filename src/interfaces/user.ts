@@ -22,10 +22,10 @@ export interface IUserInput extends Request{
     lastName: string
     employeeNumber: string
     email: string
-    // password: string
+    password: string
     dateBirth: Date
 }
 
-// export interface IUserRequest extends Request {
-//     user?: IUser;
-// }
+export interface IUserRequest extends Request {
+    user?: IUser;
+}

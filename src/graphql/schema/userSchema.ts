@@ -22,7 +22,7 @@ export const userSchema = gql`
         lastName: String!
         email: String!
         employeeNumber: String!
-        # password: String!
+        password: String!
         dateBirth: Date!
     }
 
@@ -32,7 +32,7 @@ export const userSchema = gql`
         lastName: String!
         email: String!
         employeeNumber: String!
-        # password: String!
+        password: String!
         dateBirth: Date!
     }
 
@@ -42,7 +42,7 @@ export const userSchema = gql`
         lastName: String
         employeeNumber: String!
         email: String
-        # password: String
+        password: String
         dateBirth: Date
     }
 
