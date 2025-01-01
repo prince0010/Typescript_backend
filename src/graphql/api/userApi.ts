@@ -122,9 +122,17 @@ export class userApi extends RESTDataSource {
             throw error
         }
     }
+    // Update Password
     // updatePassword = async (_id: ObjectId): Promise <IUser> => {
             
     // }
+
+     // updateProfile
+    // updateProfile = async (_id: ObjectId): Promise<IUser> => {
+    //     try{
+    // }
+
+
     // Delete the User
     // deleteUser = async (_id: ObjectId): Promise<void> => {
     //     try{
@@ -143,6 +151,8 @@ export class userApi extends RESTDataSource {
     //         throw error
     //     }
     // }
+
+   
 
     // Soft Delete
     softDeleteUser = async (_id: ObjectId): Promise<void> => {
