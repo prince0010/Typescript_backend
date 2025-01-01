@@ -25,10 +25,9 @@ export interface IUserInput extends Request{
     dateBirth: Date
 }
 
-export interface IUpdatePasswordInput {
+export interface IUpdatePasswordInput{
     _id: ObjectId
-    currentPassword: string
-    newPassword: string
+    password: string
 }
 
 // export interface IUserRequest extends Request {

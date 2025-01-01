@@ -32,6 +32,7 @@ export const authResolver = {
             { token }: IToken,
             context: IAuthRequest & IDataSource,
         ): Promise<IUser> => {
+            console.log("Received Token:", token)
             checkAuth(context)
             try{
                 const user = await context.dataSources.Auth.logout(token)

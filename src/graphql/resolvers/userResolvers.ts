@@ -69,12 +69,12 @@ export const userResolvers = {
                 _: any, 
                 input: IUpdatePasswordInput,
                 context: IAuthRequest & IDataSource
-            ): Promise<boolean> => {
+            ) => {
                 checkAuth(context)
 
                 try{
-                    await context.dataSources.User.updatePassword(input)
-                    return true
+                   const user = await context.dataSources.User.updatePassword(input)
+                  return user
                 }
                 catch(error){
                     throw error

@@ -5,6 +5,7 @@ import User from "../../models/user.js"
 import { GraphQLError } from "graphql"
 import { ITableQueryParams } from "../../interfaces/params.js"
 import bcyrpt from "bcryptjs"
+import { ObjectID } from "graphql-scalars/typings/mocks.js"
 
 export class userApi extends RESTDataSource {
     fetchUser = async (_id: ObjectId): Promise<IUser> => {
@@ -123,13 +124,18 @@ export class userApi extends RESTDataSource {
         }
     }
     // Update Password
-    updatePassword = async (
-       input: IUpdatePasswordInput
-    ): Promise <void> => {
+    updatePassword = async ({
+        _id,  
+        password,
+    }: IUpdatePasswordInput):
+     Promise <IUser> => {
             try {
-                const user = await User.findById(input._id)
+                const user = await User.findByIdAndUpdate(_id, {
+                    password: await bcyrpt.hash(password, 12)
+                }, { new: true })
 
                 if(!user){
+                    console.log("User not found.", _id, user)
                     throw new GraphQLError("User not found.", {
                         extensions: {
                             http: {
@@ -139,19 +145,7 @@ export class userApi extends RESTDataSource {
                     })
                 }
 
-                const isMatch = await bcyrpt.compare(input.currentPassword, user.password)
-                if(!isMatch){
-                    throw new GraphQLError("Current Password is incorrect.", {
-                        extensions:{
-                            http: {
-                                status: 400,
-                            }
-                        }
-                    })
-                }
-
-                user.password = await bcyrpt.hash(input.newPassword, 10)
-                await user.save()
+                return user
             } catch (error) {
                 throw error
             }

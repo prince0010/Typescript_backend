@@ -47,12 +47,6 @@ export const userSchema = gql`
         dateBirth: Date!
     }
 
-    input updatePasswordInput {
-        _id: ID!
-        currentPassword: String!
-        newPassword: String!
-    }
-
     input updateProfileInput {
         _id: ID!
         firstName: String
@@ -72,7 +66,7 @@ export const userSchema = gql`
     type Mutation {
         createUser(input: createUserInput!): User
         updateUser(input: updateUserInput!): User
-        updatePassword(input: updatePasswordInput!): Boolean
+        updatePassword(_id: ID!, password: String!): User
         updateProfile(input: updateProfileInput!): User
         # deleteUser(_id: ID!): Boolean
         softDeleteUser(_id: ID!): Boolean

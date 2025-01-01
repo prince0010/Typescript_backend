@@ -95,7 +95,7 @@ export class authApi extends RESTDataSource {
   logout = async (token : Token): Promise<IUser> => {
         try{
             const isBlackListed = await BlacklistToken.findOne({ token })
-            if(isBlackListed)
+            if (isBlackListed)
                 throw new GraphQLError("Invalid Authentication", {
                     extensions:{
                         status: {
@@ -103,6 +103,9 @@ export class authApi extends RESTDataSource {
                         }
                     },
                 })
+
+                BlacklistToken.create({ token })
+                
                 const path = process.env.PUBLIC_KEY_PATH
                 if(!path)
                     throw new GraphQLError("Invalid Authentication", {
