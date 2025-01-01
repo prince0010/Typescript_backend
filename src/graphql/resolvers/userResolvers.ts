@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 import { PubSub } from "graphql-subscriptions"
-import { IUserInput, IUser } from '../../interfaces/user.js'
-import { IAuthRequest } from '../../interfaces/auth.js'
+import { IUserInput, IUser, IUpdatePasswordInput } from '../../interfaces/user.js'
+import { IAuthRequest, IPasswordInput } from '../../interfaces/auth.js'
 import { IDataSource } from '../../interfaces/context.js'
 import { checkAuth } from '../../constants/action.js'
 import { ITableQueryParams } from '../../interfaces/params.js'
@@ -61,6 +61,22 @@ export const userResolvers = {
                     // )
                     return user
                 } catch (error) {
+                    throw error
+                }
+            },
+
+            updatePassword: async(
+                _: any, 
+                input: IUpdatePasswordInput,
+                context: IAuthRequest & IDataSource
+            ): Promise<boolean> => {
+                checkAuth(context)
+
+                try{
+                    await context.dataSources.User.updatePassword(input)
+                    return true
+                }
+                catch(error){
                     throw error
                 }
             },

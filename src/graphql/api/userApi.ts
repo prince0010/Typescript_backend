@@ -1,6 +1,6 @@
 import { RESTDataSource } from "@apollo/datasource-rest"
 import mongoose, { ObjectId } from "mongoose"
-import { IUser, IUserInput } from "../../interfaces/user.js"
+import { IUpdatePasswordInput, IUser, IUserInput } from "../../interfaces/user.js"
 import User from "../../models/user.js"
 import { GraphQLError } from "graphql"
 import { ITableQueryParams } from "../../interfaces/params.js"
@@ -81,7 +81,7 @@ export class userApi extends RESTDataSource {
             throw error
         }
     }
-    // Update User
+    // Update User / Profile
     updateUser = async (input: IUserInput): Promise<IUser> => {
         try{
             console.log("Updating User with input: sheshh", input)
@@ -123,9 +123,39 @@ export class userApi extends RESTDataSource {
         }
     }
     // Update Password
-    // updatePassword = async (_id: ObjectId): Promise <IUser> => {
-            
-    // }
+    updatePassword = async (
+       input: IUpdatePasswordInput
+    ): Promise <void> => {
+            try {
+                const user = await User.findById(input._id)
+
+                if(!user){
+                    throw new GraphQLError("User not found.", {
+                        extensions: {
+                            http: {
+                                status: 404,
+                            }
+                        }
+                    })
+                }
+
+                const isMatch = await bcyrpt.compare(input.currentPassword, user.password)
+                if(!isMatch){
+                    throw new GraphQLError("Current Password is incorrect.", {
+                        extensions:{
+                            http: {
+                                status: 400,
+                            }
+                        }
+                    })
+                }
+
+                user.password = await bcyrpt.hash(input.newPassword, 10)
+                await user.save()
+            } catch (error) {
+                throw error
+            }
+    }
 
      // updateProfile
     // updateProfile = async (_id: ObjectId): Promise<IUser> => {
