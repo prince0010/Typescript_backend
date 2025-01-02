@@ -200,9 +200,44 @@ export class authApi extends RESTDataSource {
     }
 
     // Reset Password
-    // resetPassword = async ({
-    //     _id,
-    //     password
-    // })
+    resetPassword = async (_id: string): Promise<IUser> =>{
+        try{
+            const user = await User.findById(_id)
+            if(!user){
+                throw new GraphQLError("User not found.", {
+                    extensions: {
+                        http: {
+                            status: 404,
+                        }
+                    },
+                })
+            }
+        const birthMonth = user.dateBirth.getMonth() + 1  
+        const birthYear = user.dateBirth.getFullYear()
+        const employeeNumber = user.employeeNumber
+
+        const formattedBirthMonth = String(birthMonth).padStart(2, "0").slice(-2)
+        const formattedBirthYear = String(birthYear).slice(-2)
+        const formattedEmployeeNumber = employeeNumber.slice(-2)
+
+        const newPassword = `${formattedBirthMonth}${formattedBirthYear}${formattedEmployeeNumber}`
+
+        const hashedPassword = await bcrypt.hash(newPassword, 12)
+        const updatedUser = await User.findByIdAndUpdate(_id, { password: hashedPassword }, { new: true })
+
+        if (!updatedUser) {
+            throw new GraphQLError("Failed to update password", {
+                extensions: {
+                    http: {
+                        status: 500,
+                    },
+                },
+            })
+        }
+        return updatedUser
+        }catch(error){
+            throw error
+        }
+    }
 
 }
