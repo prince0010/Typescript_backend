@@ -1,5 +1,6 @@
 import { Schema, model, Document } from 'mongoose';
 import { IUser } from '../interfaces/user.js'
+import { roles } from '../constants/enums.js'
 
 const UserModel = new Schema<IUser>({
 
@@ -47,10 +48,19 @@ const UserModel = new Schema<IUser>({
         type: Boolean,
         default: false,
     },
+    role: {
+        type: String,
+        required: true,
+        enum: {
+            values: Object.values(roles),
+            message: "Select Roles",
+        }
+    },
     },
     {
         timestamps: true,
-    }
+    },
+    
 );
 
 export default model<IUser>("User", UserModel);

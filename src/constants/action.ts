@@ -1,6 +1,7 @@
 import { PubSub } from "graphql-subscriptions"
 import { IAuthRequest } from "../interfaces/auth.js"
 import { GraphQLError } from "graphql"
+import { TRole } from "./types.js"
 
 const pubsub = new PubSub()
 
@@ -12,3 +13,19 @@ export const checkAuth = (context: IAuthRequest) => {
         })
     }
 }
+
+// export const checkAuthProtectedRoles = (
+//     context: IAuthRequest,
+//     allowedRoles: TRole[]
+// ) => {
+//     if(!context.isAuth && !allowedRoles.includes(context.authRole as TRole))
+//     {
+//         throw new GraphQLError("You have no Access on this one.", {
+//             extensions: {
+//                 http:{
+//                     status: 401
+//                 }
+//             }
+//         })
+//     }
+// }

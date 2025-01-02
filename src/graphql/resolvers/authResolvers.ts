@@ -1,11 +1,12 @@
 import dotenv from "dotenv"
 import jose from "node-jose"
-import { IAuthInput, IAuthRequest, IPasswordInput, IToken } from "../../interfaces/auth.js"
+import { IAuthInput, IAuthRequest, IToken, IUpdatePasswordInput } from "../../interfaces/auth.js"
 import { IDataSource } from "../../interfaces/context.js"
 import User from "../../models/user.js"
 import { GraphQLError } from "graphql"
-import { IUser } from "../../interfaces/user.js"
+import {  IUser } from "../../interfaces/user.js"
 import { checkAuth } from "../../constants/action.js"
+import { ObjectId } from "mongoose"
 
 dotenv.config()
 
@@ -44,7 +45,7 @@ export const authResolver = {
         },
         verifyPassword: async(
             _: any,
-            input: IPasswordInput,
+            input: IUpdatePasswordInput,
             context: IAuthRequest & IDataSource
         ): Promise<boolean> => {
             checkAuth(context)
@@ -58,14 +59,25 @@ export const authResolver = {
         // logs: async()
     },
     Mutation:{
-        changePassword: async(
+        updatePassword: async(
             _:any,
-            input:IPasswordInput,
+            input:IUpdatePasswordInput,
             context: IAuthRequest & IDataSource
         ) => {
             checkAuth(context)
+
+            const user = await context.dataSources.User.fetchUser(context.authId as ObjectId)
+
+            if(user.role !== "admin"){
+                throw new GraphQLError("You are not authorized to perform this action.", {
+                    extensions: {
+                        http: { status: 401 },
+                    },
+                })
+            }
+            
             try{
-                const User = await context.dataSources.Auth.changePasword(input)
+                const User = await context.dataSources.Auth.updatePassword(input)
                 // const actionUser = await context.dataSources.User.fetchUser(
                 //     context.authId as ObjectId
                 //   )

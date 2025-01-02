@@ -5,8 +5,9 @@ import { Request } from "express"
 
 export interface IAuthRequest extends Request {
     authId?: ObjectId
-    // authRole?: string
+    authRole?: string
     isAuth?: boolean
+    // user?: IUser
 }
 
 export interface IAuth{
@@ -17,7 +18,7 @@ export interface IAuthInput extends IAuth{
     employeeNumber: string
 }
 
-export interface IPasswordInput {
+export interface IUpdatePasswordInput{
     _id: ObjectId
     password: string
 }

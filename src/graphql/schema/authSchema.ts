@@ -19,7 +19,7 @@ export const authSchema = gql`
     }
 
     type Mutation {
-        changePassword(_id: ID!, password: String!): User
+        updatePassword(_id: ID!, password: String!): User
     }
 
 `

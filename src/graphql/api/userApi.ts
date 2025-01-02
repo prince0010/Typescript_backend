@@ -1,11 +1,10 @@
 import { RESTDataSource } from "@apollo/datasource-rest"
 import mongoose, { ObjectId } from "mongoose"
-import { IUpdatePasswordInput, IUser, IUserInput } from "../../interfaces/user.js"
+import { IUser, IUserInput } from "../../interfaces/user.js"
 import User from "../../models/user.js"
 import { GraphQLError } from "graphql"
 import { ITableQueryParams } from "../../interfaces/params.js"
 import bcyrpt from "bcryptjs"
-import { ObjectID } from "graphql-scalars/typings/mocks.js"
 
 export class userApi extends RESTDataSource {
     fetchUser = async (_id: ObjectId): Promise<IUser> => {
@@ -21,6 +20,7 @@ export class userApi extends RESTDataSource {
             throw error
         }
     } 
+    
     fetchUsers = async ({
         isActive = true,
         isDeleted = false,
@@ -53,7 +53,7 @@ export class userApi extends RESTDataSource {
     createUser = async (input: IUserInput): Promise<IUser> => {
         try{
 
-            const { dateBirth, employeeNumber } = input;
+            const { dateBirth, employeeNumber, role } = input;
 
             if (!dateBirth || isNaN(new Date(dateBirth).getTime())){
                 throw new GraphQLError("Invalid Datebirth Format,")
@@ -62,6 +62,16 @@ export class userApi extends RESTDataSource {
             if(!employeeNumber || employeeNumber.length < 4) {
                 throw new GraphQLError("Employee Number must be at least 4 characters.")
             } 
+
+            if(!["admin", "employee"].includes(role)){
+                throw new GraphQLError("Invalid Role", {
+                    extensions: {
+                        http: {
+                            status: 400,
+                        }
+                    }
+                })
+            }
 
             const birthDate = new Date(dateBirth)
             const birthMonth = (birthDate.getMonth() + 1).toString().padStart(2, '0') // last 2 digits sa birthday month niya
@@ -85,10 +95,19 @@ export class userApi extends RESTDataSource {
     // Update User / Profile
     updateUser = async (input: IUserInput): Promise<IUser> => {
         try{
+
+            const { _id, role } = input
+
+            if (role && !["admin", "user", "monitoring"].includes(role)) {
+                throw new GraphQLError("Invalid role.", {
+                    extensions: { http: { status: 400 } },
+                });
+            }
+
             console.log("Updating User with input: sheshh", input)
             console.log("Type of _id:", typeof input._id)
 
-            const user = await User.findByIdAndUpdate(input._id, input, {
+            const user = await User.findByIdAndUpdate(_id, input, {
                 new: true, 
             })
 
@@ -123,33 +142,7 @@ export class userApi extends RESTDataSource {
             throw error
         }
     }
-    // Update Password
-    updatePassword = async ({
-        _id,  
-        password,
-    }: IUpdatePasswordInput):
-     Promise <IUser> => {
-            try {
-                const user = await User.findByIdAndUpdate(_id, {
-                    password: await bcyrpt.hash(password, 12)
-                }, { new: true })
-
-                if(!user){
-                    console.log("User not found.", _id, user)
-                    throw new GraphQLError("User not found.", {
-                        extensions: {
-                            http: {
-                                status: 404,
-                            }
-                        }
-                    })
-                }
-
-                return user
-            } catch (error) {
-                throw error
-            }
-    }
+    
 
      // updateProfile
     // updateProfile = async (_id: ObjectId): Promise<IUser> => {

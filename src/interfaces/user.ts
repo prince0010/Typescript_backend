@@ -1,5 +1,6 @@
 import { Request } from "express";
 import { Document, ObjectId } from "mongoose"
+import { TRole } from "../constants/types"
 
 // Data Type sa mga entities
 export interface IUser extends Document {
@@ -13,6 +14,7 @@ export interface IUser extends Document {
     isActive: boolean
     isDeleted: boolean
     dateBirth: Date
+    role: TRole
 }
 
 export interface IUserInput extends Request{
@@ -23,12 +25,10 @@ export interface IUserInput extends Request{
     employeeNumber: string
     email: string
     dateBirth: Date
+    role: TRole
 }
 
-export interface IUpdatePasswordInput{
-    _id: ObjectId
-    password: string
-}
+
 
 // export interface IUserRequest extends Request {
 //     user?: IUser;

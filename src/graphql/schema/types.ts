@@ -2,6 +2,11 @@ const gql = String.raw
 
 export const sharedSchema = gql`
 
+    enum Role {
+        admin
+        employee
+    }
+    
     enum NotificationType {
         success
         error

@@ -1,12 +1,13 @@
 import dotenv from 'dotenv'
 import { PubSub } from "graphql-subscriptions"
-import { IUserInput, IUser, IUpdatePasswordInput } from '../../interfaces/user.js'
-import { IAuthRequest, IPasswordInput } from '../../interfaces/auth.js'
+import { IUserInput, IUser } from '../../interfaces/user.js'
+import { IAuthRequest } from '../../interfaces/auth.js'
 import { IDataSource } from '../../interfaces/context.js'
 import { checkAuth } from '../../constants/action.js'
 import { ITableQueryParams } from '../../interfaces/params.js'
 import { ObjectId } from 'mongoose'
 import { subscribe } from 'diagnostics_channel'
+import { GraphQLError } from 'graphql'
 
 dotenv.config()
 const pubsub = new PubSub()
@@ -25,14 +26,22 @@ export const userResolvers = {
                 throw error
             }
         },
+
         fetchUsers: async(
             _: any,
             input: ITableQueryParams,
             context: IAuthRequest & IDataSource
         ): Promise<IUser[]> => {
             checkAuth(context)
+
             try{
-                return await context.dataSources.User.fetchUsers(input)
+                const users = await context.dataSources.User.fetchUsers(input)
+                return users.map( user => {
+                    return {
+                        ...user.toObject(),
+                        _id: user._id.toString(),
+                    }
+                })
             } catch (error) {
                 throw error
             }
@@ -45,6 +54,17 @@ export const userResolvers = {
                 context: IAuthRequest & IDataSource
             ): Promise<IUser> => {
                 checkAuth(context)
+            
+                const user = await context.dataSources.User.fetchUser(context.authId as ObjectId)
+
+                if(user.role !== "admin"){
+                    throw new GraphQLError("You are not authorized to perform this action.", {
+                        extensions: {
+                            http: { status: 401 },
+                        },
+                    })
+                }
+
                 try{
                     const user = await context.dataSources.User.createUser(input)
 
@@ -65,28 +85,23 @@ export const userResolvers = {
                 }
             },
 
-            updatePassword: async(
-                _: any, 
-                input: IUpdatePasswordInput,
-                context: IAuthRequest & IDataSource
-            ) => {
-                checkAuth(context)
-
-                try{
-                   const user = await context.dataSources.User.updatePassword(input)
-                  return user
-                }
-                catch(error){
-                    throw error
-                }
-            },
-
             updateUser: async (
                 _: any,
                 { input }: { input: IUserInput },
                 context: IAuthRequest & IDataSource
             ): Promise<IUser> => {
                 checkAuth(context); // Ensure authentication
+
+                const user = await context.dataSources.User.fetchUser(context.authId as ObjectId)
+
+                if(user.role !== "admin"){
+                    throw new GraphQLError("You are not authorized to perform this action.", {
+                        extensions: {
+                            http: { status: 401 },
+                        },
+                    });
+                }
+
                 console.log("Update user Input:", input);
                 try {
                     // Pass the entire input object, including _id, to the data source
@@ -136,6 +151,15 @@ export const userResolvers = {
             ): Promise<boolean> =>{
                 checkAuth(context)
 
+                const user = await context.dataSources.User.fetchUser(context.authId as ObjectId)
+                if(user.role !== "admin"){
+                    throw new GraphQLError("You are not authorized to perform this action.", {
+                        extensions: {
+                            http: { status: 401 },
+                        },
+                    })
+                }
+
                 try{
                     await context.dataSources.User.softDeleteUser(_id)
 
@@ -152,6 +176,15 @@ export const userResolvers = {
                 context: IAuthRequest & IDataSource
             ): Promise<boolean> => {
                 checkAuth(context)
+
+                const user = await context.dataSources.User.fetchUser(context.authId as ObjectId)
+                if(user.role !== "admin"){
+                    throw new GraphQLError("You are not authorized to perform this action.", {
+                        extensions: {
+                            http: { status: 401 },
+                        },
+                    })
+                }
 
                 try{
                     await context.dataSources.User.hardDeleteUser(_id)
@@ -181,6 +214,15 @@ export const userResolvers = {
                 context: IAuthRequest & IDataSource
             ): Promise<boolean> => {
                 checkAuth(context)
+
+                const user = await context.dataSources.User.fetchUser(context.authId as ObjectId)
+                if(user.role !== "admin"){
+                    throw new GraphQLError("You are not authorized to perform this action.", {
+                        extensions: {
+                            http: { status: 401 },
+                        },
+                    })
+                }
 
                 try{
                     await context.dataSources.User.activateUser(_id)

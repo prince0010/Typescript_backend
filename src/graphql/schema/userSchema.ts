@@ -14,6 +14,7 @@ export const userSchema = gql`
         email: String!
         # password: String!
         dateBirth: Date!
+        role: Role
     }
 
     input UserInput {
@@ -24,6 +25,7 @@ export const userSchema = gql`
         employeeNumber: String!
         # password: String!
         dateBirth: Date!
+        role: Role
     }
 
     input createUserInput {
@@ -34,6 +36,7 @@ export const userSchema = gql`
         employeeNumber: String!
         # password: String!
         dateBirth: Date!
+        role: Role
     }
 
     input updateUserInput {
@@ -45,18 +48,8 @@ export const userSchema = gql`
         email: String!
         # password: String
         dateBirth: Date!
+        role: Role
     }
-
-    input updateProfileInput {
-        _id: ID!
-        firstName: String
-        middleName: String
-        lastName: String
-        email: String
-        employeeNumber: String
-        dateBirth: Date
-    }
-
 
     type Query {
         fetchUser(_id: ID!): User
@@ -66,8 +59,6 @@ export const userSchema = gql`
     type Mutation {
         createUser(input: createUserInput!): User
         updateUser(input: updateUserInput!): User
-        updatePassword(_id: ID!, password: String!): User
-        updateProfile(input: updateProfileInput!): User
         # deleteUser(_id: ID!): Boolean
         softDeleteUser(_id: ID!): Boolean
         hardDeleteUser(_id: ID!): Boolean

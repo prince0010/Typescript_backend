@@ -69,7 +69,7 @@ export default async(
         }
 
         request.authId = sub
-        // request.authRole = user.role;
+        request.authRole = User.role
         request.isAuth = true
 
         return next()
